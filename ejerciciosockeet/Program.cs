@@ -1,5 +1,7 @@
-﻿using System;
+﻿using ejerciciosockeet.ClienteUtils;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,23 +13,26 @@ namespace ejerciciosockeet
         static void Main(string[] args)
         {
 
-            Console.WriteLine("Hola Mundo");
-            Console.WriteLine("Ingrese nombre: ");
-            string nombre = Console.ReadLine();
-            Console.WriteLine("Ingrese Edad: ");
-            string edadtx = Console.ReadLine().Trim();
-            int edad = -1;
-            bool esValido = Int32.TryParse(edadtx, out edad);
-
-            if (!esValido) //if (!esValido) es decir If (esvalido == true) 
+            int puerto = Convert.ToInt32(ConfigurationManager.AppSettings["puerto"]);
+            string servidor = ConfigurationManager.AppSettings["servidor"];
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Conectado a Servidor {0} en puerto {1}", servidor, puerto);
+            ClienteSocket clienteSocket = new ClienteSocket(servidor, puerto);
+            if (clienteSocket.Conectar())
             {
-                Console.WriteLine("Ingrese bien la edad");
+                Console.WriteLine("Conectado...");
+                string mensaje = clienteSocket.Leer();
+                Console.WriteLine("M: {0}", mensaje);
+                string nombre = Console.ReadLine().Trim();
+                clienteSocket.Escribir(nombre);
+                mensaje = clienteSocket.Leer();
+                Console.WriteLine("M: {0}", mensaje);
+                clienteSocket.Desconectar();
             }
             else
             {
-                Console.WriteLine("Su nombre es {0} y su edad es {1}", nombre, edad);
+                Console.WriteLine("Error de Comunicacion");
             }
-
             Console.ReadKey();
         }
     }
