@@ -1,8 +1,10 @@
 ﻿using ejerciciosockeet.ClienteUtils;
+using ejerciciosockeet.ServerUtils;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,28 +14,39 @@ namespace ejerciciosockeet
     {
         static void Main(string[] args)
         {
-
             int puerto = Convert.ToInt32(ConfigurationManager.AppSettings["puerto"]);
-            string servidor = ConfigurationManager.AppSettings["servidor"];
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Conectado a Servidor {0} en puerto {1}", servidor, puerto);
-            ClienteSocket clienteSocket = new ClienteSocket(servidor, puerto);
-            if (clienteSocket.Conectar())
+
+            Console.WriteLine("Inicinado Servidor en puerto {0}", puerto);
+            ServerSocket servidor = new ServerSocket(puerto);
+
+            if (servidor.Iniciar())
             {
-                Console.WriteLine("Conectado...");
-                string mensaje = clienteSocket.Leer();
-                Console.WriteLine("M: {0}", mensaje);
-                string nombre = Console.ReadLine().Trim();
-                clienteSocket.Escribir(nombre);
-                mensaje = clienteSocket.Leer();
-                Console.WriteLine("M: {0}", mensaje);
-                clienteSocket.Desconectar();
+                //OK puede conectar
+                Console.WriteLine("Servidor Iniciado");
+                while (true)
+                {
+                    Console.WriteLine("Esperando Cliente");
+                    Socket socketCliente = servidor.ObtenerCliente();
+                    //Construir el mecanismo para escribir y leer
+                    ClienteCom cliente = new ClienteCom(socketCliente);
+                    //aqui esta el protocolo de comuncacion, ambos deben conocerlo
+                    cliente.Escribir("Hola Mundo cliente, dime tu nombre???");
+                    string respuesta = cliente.Leer();
+                    Console.WriteLine("El cliente mando: {0}", respuesta);
+                    cliente.Escribir("Hasta la vista bi be " + respuesta);
+                    cliente.Desconectar();
+                }
+
+
+
             }
             else
             {
-                Console.WriteLine("Error de Comunicacion");
+                Console.WriteLine("Errror, el puerto {0} esta en uso", puerto);
             }
-            Console.ReadKey();
         }
     }
 }
+
+
+
