@@ -30,10 +30,10 @@ namespace ejerciciosockeet
                     //Construir el mecanismo para escribir y leer
                     ClienteCom cliente = new ClienteCom(socketCliente);
                     //aqui esta el protocolo de comuncacion, ambos deben conocerlo
-                    cliente.Escribir("Hola Mundo cliente, dime tu nombre???");
+                    cliente.Escribir("Hola, cual es tu nombre?");
                     string respuesta = cliente.Leer();
                     Console.WriteLine("El cliente mando: {0}", respuesta);
-                    cliente.Escribir("Hasta la vista bi be " + respuesta);
+                    cliente.Escribir(" " + respuesta);
                     cliente.Desconectar();
                 }
 

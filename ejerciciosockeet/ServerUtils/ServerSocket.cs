@@ -19,8 +19,7 @@ namespace ejerciciosockeet.ServerUtils
             this.puerto = puerto;
         }
 
-        //Inicia la conexion del servidor, tomando posesion del puerto
-        //devuelve true  en caso de conexion OK y false en caso contrario
+        
         public bool Iniciar()
         {
             try
